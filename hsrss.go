@@ -70,14 +70,14 @@ func getAllHsPhotos() {
 			rfc822DateString := t.In(time.FixedZone("EST", -5*60*60)).Format(outputFormat)
 
 			rssFeed += "<item>"
-			rssFeed += "<title>Photo (" + photoId + "): " + publishDate + "</title>"
+			rssFeed += "<title>Hedi Silmane (" + photoId + "): " + publishDate + "</title>"
 			rssFeed += "<pubDate>" + rfc822DateString + "</pubDate>"
 			rssFeed += "<dc:creator><![CDATA[ Hedi Silmane ]]></dc:creator>"
 			rssFeed += "<description><![CDATA[<img src=" + photoSrc + " />]]></description>"
 			rssFeed += "<guid>" + photoSrc + "</guid>"
 			rssFeed += "</item>"
 
-			fmt.Printf("Page: %d Post: %d\n", pageNumber, i)
+			fmt.Printf("Page: %d Post: %d\n", pageNumber, i+1)
 		})
 
 		pageNumber++

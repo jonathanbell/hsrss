@@ -5,7 +5,7 @@
 
   [headers.values]
     Cache-Control = "no-cache, must-revalidate"
-    Content-Type = "application/atom+xml;charset=UTF-8"
+    Content-Type = "application/xml;charset=UTF-8"
     Pragma = "no-cache"
     X-Made-With = "Love"
 
