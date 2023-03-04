@@ -1,6 +1,9 @@
 [[headers]]
   # Define which paths this specific [[headers]] block will cover.
-  for = "/index.html"
+  for = "/"
 
   [headers.values]
     X-Made-With = "Love <3"
+
+[build]
+  publish = "public/"
