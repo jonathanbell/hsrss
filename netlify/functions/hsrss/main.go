@@ -1,28 +1,18 @@
 package main
 
 import (
-	"log"
-	"os"
-
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
 func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
-	rssFile, err := os.ReadFile("../../../public/output.xml")
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	// https://stackoverflow.com/a/57173617/1171790
 	return &events.APIGatewayProxyResponse{
 		StatusCode: 200,
 		Headers: map[string]string{
-			// https://stackoverflow.com/a/57173617/1171790
-			"Content-Type":  "application/atom+xml;charset=UTF-8",
-			"Pragma":        "no-cache",
-			"Cache-Control": "no-cache, must-revalidate",
+			"Content-Type": "text/html; charset=utf-8",
 		},
-		Body: string(rssFile),
+		Body: "Now you do what they told ya",
 	}, nil
 }
 

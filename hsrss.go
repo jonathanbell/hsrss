@@ -25,7 +25,7 @@ func getAllHsPhotos() {
 		<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
 			<channel>
 				<title>Hedi Silmane's Diary</title>
-				<atom:link href="http://EXAMPLESITE.COM/RSS" rel="self" type="application/rss+xml" />
+				<atom:link href="https://hsrss.netlify.app/hsrss.xml" rel="self" type="application/rss+xml" />
 				<link>https://www.hedislimane.com/diary/</link>
 				<description>hedislimane.com diary</description>
 	`
@@ -56,6 +56,7 @@ func getAllHsPhotos() {
 			photoSrc := post.Find("img").First().AttrOr("src", "no photo")
 			publishDate := post.Find(".date").First().Text()
 			publishDate = strings.ReplaceAll(publishDate, "\n", "")
+			photoId := strings.Trim(strings.Split(publishDate, "/")[1], " ")
 			publishDate = strings.Trim(strings.Split(publishDate, "/")[0], " ")
 
 			// Dates in Go are fuuuccctt.... 😰
@@ -69,6 +70,7 @@ func getAllHsPhotos() {
 			rfc822DateString := t.In(time.FixedZone("EST", -5*60*60)).Format(outputFormat)
 
 			rssFeed += "<item>"
+			rssFeed += "<title>Photo (" + photoId + "): " + publishDate + "</title>"
 			rssFeed += "<pubDate>" + rfc822DateString + "</pubDate>"
 			rssFeed += "<dc:creator><![CDATA[ Hedi Silmane ]]></dc:creator>"
 			rssFeed += "<description><![CDATA[<img src=" + photoSrc + " />]]></description>"
@@ -88,7 +90,7 @@ func getAllHsPhotos() {
 	}
 
 	// Write our RSS feed to a file
-	file, err := os.Create("./public/output.xml")
+	file, err := os.Create("./public/hsrss.xml")
 	checkErrors(err)
 
 	_, e := file.WriteString(rssFeed)
@@ -107,6 +109,6 @@ func getAllHsPhotos() {
 	fmt.Println("Got a total of ", pageNumber, " pages.")
 }
 
-func generateRssFeed() {
+func main() {
 	getAllHsPhotos()
 }

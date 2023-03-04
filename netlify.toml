@@ -1,9 +1,14 @@
 [[headers]]
   # Define which paths this specific [[headers]] block will cover.
-  for = "/"
+  # https://stackoverflow.com/a/57173617/1171790
+  for = "/hsrss.xml"
 
   [headers.values]
-    X-Made-With = "Love <3"
+    Cache-Control = "no-cache, must-revalidate"
+    Content-Type = "application/atom+xml;charset=UTF-8"
+    Pragma = "no-cache"
+    X-Made-With = "Love"
 
 [build]
   publish = "public/"
+  command = "go run hsrss.go"
