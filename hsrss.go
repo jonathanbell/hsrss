@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -10,12 +11,6 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 )
-
-func checkErrors(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
 
 func getAllHsPhotos() {
 	pageNumber := 1
@@ -30,14 +25,16 @@ func getAllHsPhotos() {
 				<description>hedislimane.com diary</description>
 	`
 
+	photoCount := 0
 	for isConnectionSuccessful {
 		res, err := http.Get("https://www.hedislimane.com/diary/" + fmt.Sprint(pageNumber))
 		if err != nil {
 			log.Fatal(err)
+			panic(err)
 		}
 		defer res.Body.Close()
 
-		// We loop unitl we no longer get a 200 status code
+		// We loop until we no longer get a 200 status code
 		if res.StatusCode != 200 {
 			isConnectionSuccessful = false
 			pageNumber--
@@ -48,6 +45,7 @@ func getAllHsPhotos() {
 		doc, err := goquery.NewDocumentFromReader(res.Body)
 		if err != nil {
 			log.Fatal(err)
+			panic(err)
 		}
 
 		// Find HS posts
@@ -77,7 +75,8 @@ func getAllHsPhotos() {
 			rssFeed += "<guid>" + photoSrc + "</guid>"
 			rssFeed += "</item>"
 
-			fmt.Printf("Page: %d Post: %d\n", pageNumber, i+1)
+			fmt.Printf("Page: %d Post: %d Photo: %s\n", pageNumber, i+1, photoId)
+			photoCount++
 		})
 
 		pageNumber++
@@ -89,9 +88,24 @@ func getAllHsPhotos() {
 		log.Fatal("Error while connecting to Hedi Slimane's Diary")
 	}
 
+	// Check if we can't find the photos.
+	// If we cannot, we use the previous RSS feed.
+	if photoCount < 1 {
+		resp, err := http.Get("https://hsrss.netlify.app/hsrss.xml")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer resp.Body.Close()
+
+		byteArRes, _ := io.ReadAll(resp.Body)
+		rssFeed = string(byteArRes)
+	}
+
 	// Write our RSS feed to a file
 	file, err := os.Create("./public/hsrss.xml")
-	checkErrors(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	_, e := file.WriteString(rssFeed)
 	if e != nil {
