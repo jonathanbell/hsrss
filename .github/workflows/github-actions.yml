@@ -1,0 +1,13 @@
+name: Re-build HS RSS feed
+run-name: 🚀 asking Netlify to start a new build (${{ github.actor }})
+on:
+  schedule:
+    - cron: "0 1 1-31/2 * *"
+jobs:
+  request-FF-Stock-History-earnings-data-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send POST request to Netlify
+        run: |
+          curl --location --silent --request POST curl -X POST -d {} https://api.netlify.com/build_hooks/6407d06644256321b6eac51c?trigger_title=triggered+by+Github+Actions
+      - run: echo "✅ Job completed with status ${{ job.status }}."
